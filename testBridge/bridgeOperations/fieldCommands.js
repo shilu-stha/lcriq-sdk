@@ -20,6 +20,3 @@ export const pause = (bridge, eventEmitter) => {
     bridge.pause();
     return callback(eventEmitter);
 }
-
-export const requestData = bridge => bridge.readData();
-  
