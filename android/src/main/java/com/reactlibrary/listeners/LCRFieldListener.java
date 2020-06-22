@@ -13,6 +13,7 @@ import com.liquidcontrols.lcr.iq.sdk.interfaces.FieldListener;
 import com.liquidcontrols.lcr.iq.sdk.lc.api.constants.FIELDS.FIELD_REQUEST_STATES;
 import com.liquidcontrols.lcr.iq.sdk.lc.api.constants.FIELDS.UNITS;
 import com.liquidcontrols.lcr.iq.sdk.lc.api.constants.LCR.FIELD_WRITE_STATE;
+import com.reactlibrary.LCRManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class LCRFieldListener implements FieldListener {
 
   /** LCR User fields to get data */
   public static FieldItem grossQty = null;
-  private FieldItem flowRate = null;
+  public FieldItem flowRate = null;
 
 
   public LCRFieldListener(Context context){
@@ -113,14 +114,26 @@ public class LCRFieldListener implements FieldListener {
     if(requestField.getItemToRequest().equals(grossQty)) {
       // Set logger off for this field
       showInLog = false;
+      String grossQty = String.format(
+                  Locale.getDefault(),
+                  "%s   %s",
+                  responseField.getNewValue(),
+                  strMeasureUnit);
+      LCRManager.getInstance(context).resolvePromise(true, grossQty, "GROSS_QTY");
+    }
+
+    if(requestField.getItemToRequest().equals(flowRate)) {
+      // Set logger off for this field
+      showInLog = false;
       // Format setText string
-      // TODO: Send continous update to JS
-//      inputGrossQty.setText(
-//        String.format(
-//          Locale.getDefault(),
-//          "%s   %s",
-//          responseField.getNewValue(),
-//          strMeasureUnit));
+      String flowRate = String.format(
+        Locale.getDefault(),
+        "%s   %s/%s",
+        responseField.getNewValue(),
+        strMeasureUnit,
+        strRateBaseUnit);
+      LCRManager.getInstance(context).resolvePromise(true, flowRate, "FLOW_RATE");
+
     }
 
     if(showInLog) {

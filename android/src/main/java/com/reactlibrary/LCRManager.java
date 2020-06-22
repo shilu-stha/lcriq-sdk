@@ -5,13 +5,17 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.liquidcontrols.lcr.iq.sdk.ConnectionOptions;
+import com.liquidcontrols.lcr.iq.sdk.FieldItem;
 import com.liquidcontrols.lcr.iq.sdk.LcrSdk;
+import com.liquidcontrols.lcr.iq.sdk.RequestField;
 import com.liquidcontrols.lcr.iq.sdk.SDKDeviceException;
 import com.liquidcontrols.lcr.iq.sdk.lc.api.constants.LCR.LCR_COMMAND;
 import com.liquidcontrols.lcr.iq.sdk.utils.AsyncCallback;
+import com.liquidcontrols.lcr.iq.sdk.utils.TimeSet;
 import com.reactlibrary.listeners.LCRCommandListener;
 import com.reactlibrary.listeners.LCRDeviceCommunicationListener;
 import com.reactlibrary.listeners.LCRDeviceConnectionListener;
@@ -21,6 +25,9 @@ import com.reactlibrary.listeners.LCRFieldListener;
 import com.reactlibrary.listeners.LCRNetworkConnectionListener;
 import com.reactlibrary.listeners.LCRPrinterStatusListener;
 import com.reactlibrary.listeners.LCRSwitchStateListener;
+
+import java.sql.Struct;
+import java.util.concurrent.TimeUnit;
 
 import static com.reactlibrary.RNLibLcrModule.emitDeviceEvent;
 
@@ -36,6 +43,8 @@ public class LCRManager {
   private LCRSwitchStateListener switchStateListener;
   private LCRDeviceStatusListener deviceStatusListener;
   private LCRPrinterStatusListener printerStatusListener;
+  private FieldItem grossQty = null;
+  private FieldItem flowRate = null;
 
   private LCRManager(Context context){
     this.context = context;
@@ -214,9 +223,129 @@ public class LCRManager {
       ConnectionUtils.getInstance().getDeviceId(),
       deliveryStatus);
   }
-  public void readData() {
 
+  /**
+   * Request for field data
+   *
+   * @param fields 'GROSS_QTY', 'FLOW_RATE'
+   */
+  public void requestFieldData(ReadableArray fields) {
+    for (int i = 0; i < fields.size(); i++) {
+      ReadableMap item = fields.getMap(i);
+      String field = item.getString("fieldName");
+      switch (field){
+        case "GROSS_QTY":
+          grossQty = fieldListener.grossQty;
+          break;
+        case "FLOW_RATE":
+          flowRate = fieldListener.flowRate;
+          break;
+      }
+    }
+
+    // If gross quantity field is available
+    if (grossQty != null) {
+      Log.d(TAG, "SDK : Send command for request field " + grossQty.getFieldName() + " with 1 second update interval");
+
+      lcrSdk.requestFieldData(
+        ConnectionUtils.getInstance().getDeviceId(),
+        new RequestField(
+          grossQty,
+          new TimeSet(1, TimeUnit.SECONDS)),
+        new AsyncCallback() {
+          @Override
+          public void onAsyncReturn(@Nullable Throwable throwable) {
+            if(throwable != null) {
+              Log.e(TAG, "SDK : Request command for field " + grossQty.getFieldName() + " failed : " + throwable.getLocalizedMessage(), throwable );
+              resolvePromise(false, "SDK : Request command for field " + grossQty.getFieldName() + " failed : " + throwable.getLocalizedMessage(), "requestFieldData");
+            } else {
+              Log.d(TAG, "SDK : Request command for field " + grossQty.getFieldName() + " success");
+              resolvePromise(true, "SDK : Request command for field " + grossQty.getFieldName() + " success ", "requestFieldData");
+            }
+          }
+        });
+    }
+
+    if (flowRate != null) {
+      lcrSdk.requestFieldData(
+        ConnectionUtils.getInstance().getDeviceId(),
+        new RequestField(
+          flowRate,
+          new TimeSet(2, TimeUnit.SECONDS)),
+        new AsyncCallback() {
+          @Override
+          public void onAsyncReturn(@Nullable Throwable throwable) {
+            if(throwable != null) {
+              Log.e(TAG, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), throwable );
+              resolvePromise(false, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), "requestFieldData");
+            } else {
+              Log.e(TAG, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), throwable );
+              resolvePromise(true, "SDK : Request command for field " + flowRate.getFieldName() + " success ", "requestFieldData");
+            }
+          }
+        });
+    }
   }
+
+  /**
+   * Remove request for data for selected fields.
+   *
+   * @param fields 'GROSS_QTY', 'FLOW_RATE'
+   */
+  public void removeFieldRequestData (ReadableArray fields) {
+    for (int i = 0; i < fields.size(); i++) {
+      ReadableMap item = fields.getMap(i);
+      String field = item.getString("fieldName");
+      switch (field){
+        case "GROSS_QTY":
+          grossQty = fieldListener.grossQty;
+          break;
+        case "FLOW_RATE":
+          flowRate = fieldListener.flowRate;
+          break;
+      }
+
+    }
+
+    if (grossQty != null) {
+      Log.d(TAG, "SDK : Send command for removing field data request " + grossQty.getFieldName());
+      lcrSdk.removeFieldDataRequest(
+        ConnectionUtils.getInstance().getDeviceId(),
+        grossQty,
+        new AsyncCallback() {
+          @Override
+          public void onAsyncReturn(@Nullable Throwable throwable) {
+            if(throwable != null) {
+              Log.e(TAG, "SDK : Remove command for field data request " + grossQty.getFieldName() + " failed : " + throwable.getLocalizedMessage());
+              resolvePromise(false, "SDK : Remove command for field " + grossQty.getFieldName() + " failed : " + throwable.getLocalizedMessage(), "removeFieldRequestData");
+            } else {
+              Log.d(TAG, "SDK : Remove command for field data request " + grossQty.getFieldName() + " success");
+              resolvePromise(true, "SDK : Remove command for field " + grossQty.getFieldName() + " success ", "removeFieldRequestData");
+            }
+          }
+        });
+    }
+
+    if (flowRate != null) {
+      Log.d(TAG, "SDK : Send command for removing field data request " + flowRate.getFieldName());
+      lcrSdk.removeFieldDataRequest(
+        ConnectionUtils.getInstance().getDeviceId(),
+        flowRate,
+        new AsyncCallback() {
+          @Override
+          public void onAsyncReturn(@Nullable Throwable throwable) {
+            if(throwable != null) {
+              Log.e(TAG, "SDK : Remove command for field data request " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), throwable);
+              resolvePromise(false, "SDK : Remove command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), "removeFieldRequestData");
+            } else {
+              Log.d(TAG, "SDK : Remove command for field data request " + flowRate.getFieldName() + " success");
+              resolvePromise(true, "SDK : Remove command for field " + flowRate.getFieldName() + " success ", "removeFieldRequestData");
+            }
+          }
+        });
+    }
+  }
+
   public void reset() {
 
   }
