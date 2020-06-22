@@ -8,7 +8,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -20,18 +20,22 @@ public class RNLibLcrModule extends ReactContextBaseJavaModule {
   public static final String REACT_CLASS = "RNLibLcrModule";
   private static ReactApplicationContext reactContext = null;
 
+  /**
+   * Pass in the context to the constructor and save it so you can emit events
+   * @param context
+   */
   public RNLibLcrModule(ReactApplicationContext context) {
-    // Pass in the context to the constructor and save it so you can emit events
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#the-toast-module
     super(context);
 
     reactContext = context;
   }
 
+  /**
+   * Tell React the name of the module
+   * @return
+   */
   @Override
   public String getName() {
-    // Tell React the name of the module
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#the-toast-module
     return REACT_CLASS;
   }
 
@@ -45,37 +49,66 @@ public class RNLibLcrModule extends ReactContextBaseJavaModule {
     return constants;
   }
 
-  @ReactMethod
-  public void exampleMethod () {
-    // An example native method that you will expose to React
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#the-toast-module
-  }
-
-  private static void emitDeviceEvent(String eventName, @Nullable WritableMap eventData) {
-    // A method for emitting from the native side to JS
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#sending-events-to-javascript
+  /**
+   * A method for emitting from the native side to JS
+   * @param eventName
+   * @param eventData
+   */
+  static void emitDeviceEvent(String eventName, @Nullable WritableMap eventData) {
     reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, eventData);
-  }
-
-  @ReactMethod
-  public void requestDeviceId() {
-    // A method to request the device ID, below you could be calling an SDK implementation
-    // Remember to consider error handing here to void app crashes
-    deviceID("10001");
-//    deviceID("10001");
-  }
-
-  private void deviceID(String id){
-    // This might be a method within a class that implements the SDK you're using
-    // We use Arguments.createMap to build an object to return
-    WritableMap idData = Arguments.createMap();
-    idData.putString("id", id);
-    emitDeviceEvent("device-id", idData);
   }
 
   @ReactMethod
   public void initialize() {
     LCRManager.getInstance(reactContext).initializeSdk();
+  }
+
+  /**
+   * Terminate lcr sdk and its connections.
+   */
+  @ReactMethod
+  public void terminate() {
+    LCRManager.getInstance(reactContext).terminateSdk();
+  }
+
+  /**
+   * Connect to LCR meter. Send type of connection and its details.
+   *
+   * @param type (WIFI, BLUETOOTH)
+   * @param additionalDetails (Wifi: ipAddress, port; Bluetooth: name)
+   */
+  @ReactMethod
+  public void connectDevice(String type, ReadableMap additionalDetails) {
+    LCRManager.getInstance(reactContext).addDevice(type, additionalDetails);
+  }
+
+  /**
+   * Send start command to the meter to start refueling and tracking additional fields.
+   */
+  @ReactMethod
+  public void start() {
+    LCRManager.getInstance(reactContext).start();
+  }
+
+  /**
+   * Send pause command to the meter.
+   */
+  @ReactMethod
+  public void pause() {
+    LCRManager.getInstance(reactContext).pause();
+  }
+
+  /**
+   * Send stop command to the meter.
+   */
+  @ReactMethod
+  public void stop() {
+    LCRManager.getInstance(reactContext).stop();
+  }
+
+  @ReactMethod
+  public void readData() {
+    LCRManager.getInstance(reactContext).readData();
   }
 
   @ReactMethod
