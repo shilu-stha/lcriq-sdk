@@ -74,6 +74,11 @@ public class RNLibLcrModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
+  public void initialize() {
+    LCRManager.getInstance(reactContext).initializeSdk();
+  }
+
+  @ReactMethod
   public void getValue(final Promise promise) {
     promise.resolve("A real native value");
   }
