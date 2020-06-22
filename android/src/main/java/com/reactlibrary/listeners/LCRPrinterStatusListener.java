@@ -1,7 +1,6 @@
 package com.reactlibrary.listeners;
 
 import android.content.Context;
-import android.widget.TextView;
 
 import com.liquidcontrols.lcr.iq.sdk.DeviceInfo;
 import com.liquidcontrols.lcr.iq.sdk.interfaces.PrinterStatusListener;
@@ -12,9 +11,11 @@ import java.util.Locale;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 public class LCRPrinterStatusListener implements PrinterStatusListener {
 
+  private static String TAG = "lcr-sdk: LCRPrinterStatusListener";
   private final Context context;
 
   public LCRPrinterStatusListener(Context context){
@@ -37,8 +38,7 @@ public class LCRPrinterStatusListener implements PrinterStatusListener {
     @Nullable Boolean newValue,
     @Nullable Boolean oldValue) {
 
-    // Logging printer status codes and values
-//    setTextViewLogger("Printer Status : " + statusCode + " " + oldValue + " -> " + newValue);
+    Log.d(TAG, "onPrinterStatusChanged: "+ statusCode + " " + oldValue + " -> " + newValue);
   }
 
   /**
@@ -58,8 +58,7 @@ public class LCRPrinterStatusListener implements PrinterStatusListener {
     @Nullable PRINTING_STATE newValue,
     @Nullable PRINTING_STATE oldValue) {
 
-    // Logging printing status change
-//    setTextViewLogger("Printing status : " + oldValue + " -> " + newValue);
+    Log.d(TAG, "onPrintStatusChanged: " + oldValue + " -> " + newValue);
   }
 
   /**
@@ -75,7 +74,7 @@ public class LCRPrinterStatusListener implements PrinterStatusListener {
     @NonNull String workId) {
 
     // Logging print success
-//    setTextViewLogger("Printing success");
+    Log.d(TAG, "onPrintSuccess: ");
   }
 
   /**
@@ -99,7 +98,7 @@ public class LCRPrinterStatusListener implements PrinterStatusListener {
         "LCP Error : %s",
         cause.getMessage());
     }
-    // Logging print work failed
-//    setTextViewLogger("Print failed : " + strCause);
+
+    Log.e(TAG, "onPrintFailed: "+strCause, cause);
   }
 }

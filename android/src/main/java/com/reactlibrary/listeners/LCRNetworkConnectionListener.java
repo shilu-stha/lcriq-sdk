@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 
 public class LCRNetworkConnectionListener implements NetworkConnectionListener {
 
+  private static String TAG = "lcr-sdk: LCRNetworkConnectionListener";
   private final Context context;
 
   public LCRNetworkConnectionListener(Context context){
@@ -55,6 +56,7 @@ public class LCRNetworkConnectionListener implements NetworkConnectionListener {
     @NonNull List<DeviceInfo> attachedDevices) {
 
     LCRManager.getInstance(context).resolvePromise(true, "SDK: Network Connected", "connectDevice");
+    Log.d(TAG, "onNetworkConnected: ");
   }
 
   /**
@@ -76,7 +78,7 @@ public class LCRNetworkConnectionListener implements NetworkConnectionListener {
       strCause = cause.getMessage();
     }
 
-    Log.d("LCR-SDK", "Network disconnected : " + networkType.name() + " : " + strCause);
+    Log.e(TAG, "onNetworkDisconnected: " + networkType.name() + " : " + strCause, cause);
     LCRManager.getInstance(context).resolvePromise(true, "Network disconnected : " + networkType.name() + " : " + strCause, "disconnectDevice");
   }
 
@@ -98,6 +100,7 @@ public class LCRNetworkConnectionListener implements NetworkConnectionListener {
     if(cause != null) {
       strCause = cause.getMessage();
     }
+    Log.e(TAG, "onNetworkError: "+ networkType.name() + " : " + strCause, cause);
     LCRManager.getInstance(context).resolvePromise(false, "Network error : " + networkType.name() + " : " + strCause, "connectDevice");
   }
 }

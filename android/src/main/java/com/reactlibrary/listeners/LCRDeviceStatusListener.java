@@ -2,8 +2,6 @@ package com.reactlibrary.listeners;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.liquidcontrols.lcr.iq.sdk.DeviceInfo;
 import com.liquidcontrols.lcr.iq.sdk.interfaces.DeviceStatusListener;
@@ -17,11 +15,8 @@ import android.support.annotation.Nullable;
 
 public class LCRDeviceStatusListener implements DeviceStatusListener {
 
+  private static String TAG = "lcr-sdk: LCRDeviceStatusListener";
   private final Context context;
-  private TextView tvLogger;
-  private Button btnStart;
-  private Button btnPause;
-  private Button btnStop;
 
   public LCRDeviceStatusListener(Context context){
     this.context = context;
@@ -56,6 +51,7 @@ public class LCRDeviceStatusListener implements DeviceStatusListener {
 //    }
     // Logging delivery code status
 //    setTextViewLogger("Delivery code changed : " + code + " " + oldValue + " -> " + newValue);
+    Log.d(TAG, "onDeliveryCodeChanged: " + code + " " + oldValue + " -> " + newValue);
   }
 
   /**
@@ -76,6 +72,7 @@ public class LCRDeviceStatusListener implements DeviceStatusListener {
 
     // Logging delivery status codes
 //    setTextViewLogger("Delivery Status changed : " + code + " " + oldValue + " -> " + newValue);
+    Log.d(TAG, "onDeliveryStatusChanged: " + code + " " + oldValue + " -> " + newValue);
   }
 
   /**
@@ -92,6 +89,7 @@ public class LCRDeviceStatusListener implements DeviceStatusListener {
 
     // Logging delivery active state
 //    setTextViewLogger("Delivery active state changed : " + deliveryActiveState);
+    Log.d(TAG, "onDeliveryActiveStateChanged: "+ deliveryActiveState);
   }
 
   /**
@@ -108,7 +106,7 @@ public class LCRDeviceStatusListener implements DeviceStatusListener {
     @Nullable LCR_DEVICE_STATE newValue,
     @Nullable LCR_DEVICE_STATE oldValue) {
 
-//    Log.d("Panda LCRDeviceStatusListener", "onDeviceStateChanged: " + newValue);
+    Log.d(TAG, "onDeviceStateChanged: " +  oldValue + " -> " + newValue);
 
     // Set start/pause button by state
 //    if (btnStart != null && newValue != null) {
@@ -127,8 +125,6 @@ public class LCRDeviceStatusListener implements DeviceStatusListener {
 //          break;
 //      }
 //    }
-//    // Logging device state
-//    setTextViewLogger("Device state changed : " + oldValue + " -> " + newValue);
   }
 
   /**
@@ -145,7 +141,7 @@ public class LCRDeviceStatusListener implements DeviceStatusListener {
     @Nullable LCR_SECURITY_LEVEL oldValue) {
 
     // Logging security level (old security level -> new security level)
-//    setTextViewLogger("Security level changed : " + " " + oldValue + " -> " + newValue);
+    Log.d(TAG, "onSecurityLevelChanged: "+ oldValue + " -> " + newValue);
   }
 
 }

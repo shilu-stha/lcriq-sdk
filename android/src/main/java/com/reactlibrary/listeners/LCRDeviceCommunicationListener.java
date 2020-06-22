@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.liquidcontrols.lcr.iq.sdk.DeviceInfo;
 import com.liquidcontrols.lcr.iq.sdk.LCRCommunicationException;
@@ -15,27 +14,12 @@ import com.liquidcontrols.lcr.iq.sdk.lc.api.device.InternalEvent;
 
 public class LCRDeviceCommunicationListener implements DeviceCommunicationListener {
 
+  private static String TAG = "lcr-sdk: LCRDeviceCommunicationListener";
   private final Context context;
-  private TextView tvLogger;
 
   public LCRDeviceCommunicationListener(Context context){
     this.context = context;
-//    tvLogger = (TextView) ((MainActivity)context).findViewById(R.id.tv_data_logger);
   }
-
-//  private void setTextViewLogger(String text) {
-//    Logs logs = Logs.getInstance();
-//    List<String> dataList = logs.setTextViewLogger(text);
-//
-//    String textBuffer = "";
-//    // Make data to print
-//    for (String str : dataList) {
-//      textBuffer = textBuffer + str + "\n";
-//    }
-//    // Print data
-//    tvLogger.setText(textBuffer);
-//    Log.d("Panda", textBuffer);
-//  }
 
   /**
    * Notify when message state is changed between SDK and LCR device
@@ -76,17 +60,16 @@ public class LCRDeviceCommunicationListener implements DeviceCommunicationListen
     @NonNull DeviceInfo deviceInfo,
     @NonNull LCRCommunicationException cause) {
 
-    Log.e("ERROR_EVENT", "---------------------------------");
-    Log.e("ERROR_EVENT", "Error event from : " + deviceId);
-    Log.e("ERROR_EVENT", "-------- event data start--------");
+    Log.e(TAG, "---------------------------------");
+    Log.e(TAG, "Error event from : " + deviceId);
+    Log.e(TAG, "-------- event data start--------");
     // Print events trace to lead up in error (not complete trace yet)
     Integer lineNumber = 1;
     for(InternalEvent event : cause.getEvents()) {
       // Print events (all type of events)
-      Log.e("ERROR_EVENT", String.valueOf(lineNumber++) + " - " + (event.toShortFormat()));
+      Log.e(TAG, String.valueOf(lineNumber++) + " - " + (event.toShortFormat()));
     }
-    Log.e("ERROR_EVENT", "--------- event data end ---------");
-//    setTextViewLogger("ERROR_EVENT--------- event data end ---------");
+    Log.e(TAG, "--------- event data end ---------");
   }
 
   /**

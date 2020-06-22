@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.liquidcontrols.lcr.iq.sdk.DeviceInfo;
 import com.liquidcontrols.lcr.iq.sdk.FieldItem;
@@ -23,39 +22,21 @@ import java.util.Locale;
 
 public class LCRFieldListener implements FieldListener {
 
+  private static String TAG = "lcr-sdk: LCRFieldListener";
   private final Context context;
-  private TextView tvLogger;
-  private TextView inputGrossQty;
 
   /** List for available fields */
   private final List<FieldItem> availableLCRFields = new ArrayList<>();
 
   /** LCR User fields to get data */
   public static FieldItem grossQty = null;
-//  private FieldItem grossPreset = null;
   private FieldItem flowRate = null;
 
 
   public LCRFieldListener(Context context){
     this.context = context;
-
-//    tvLogger = (TextView) ((MainActivity)context).findViewById(R.id.tv_data_logger);
-//    inputGrossQty = (TextView) ((MainActivity)context).findViewById(R.id.tvMeterRead);
   }
 
-//  private void setTextViewLogger(String text) {
-//    Logs logs = Logs.getInstance();
-//    List<String> dataList = logs.setTextViewLogger(text);
-//
-//    String textBuffer = "";
-//    // Make data to print
-//    for (String str : dataList) {
-//      textBuffer = textBuffer + str + "\n";
-//    }
-//    // Print data
-//    tvLogger.setText(textBuffer);
-//    Log.d("Panda", textBuffer);
-//  }
 
   /** Helper to look available field by name */
   @Nullable
@@ -88,8 +69,8 @@ public class LCRFieldListener implements FieldListener {
 
     if(fields != null) {
       String logText = "Field info arrived : " + fields.size() + " fields";
-      Log.d("FieldInfoChanged", logText);
-//      setTextViewLogger(logText);
+      Log.d(TAG, "onFieldInfoChanged: "+logText);
+
       // Add all list items to local list
       availableLCRFields.addAll(fields);
 
@@ -97,8 +78,6 @@ public class LCRFieldListener implements FieldListener {
       grossQty = findUserFieldByName("GROSSQTY");
       flowRate = findUserFieldByName("FLOWRATE");
     }
-    // Check GROSS_PRESET access and set UI Components
-    // checkAndSetPresetUpdateState();
   }
 
   /**
@@ -135,12 +114,13 @@ public class LCRFieldListener implements FieldListener {
       // Set logger off for this field
       showInLog = false;
       // Format setText string
-      inputGrossQty.setText(
-        String.format(
-          Locale.getDefault(),
-          "%s   %s",
-          responseField.getNewValue(),
-          strMeasureUnit));
+      // TODO: Send continous update to JS
+//      inputGrossQty.setText(
+//        String.format(
+//          Locale.getDefault(),
+//          "%s   %s",
+//          responseField.getNewValue(),
+//          strMeasureUnit));
     }
 
     if(showInLog) {
@@ -151,7 +131,7 @@ public class LCRFieldListener implements FieldListener {
         + responseField.getNewValue();
 
       // Logging field data change event
-//      setTextViewLogger(logText);
+      Log.d(TAG, "onFieldReadDataChanged: "+logText);
     }
   }
 
@@ -179,9 +159,7 @@ public class LCRFieldListener implements FieldListener {
 
     logString = String.format(Locale.getDefault(),
       "Field data request success %s time : %s" ,requestField.getItemToRequest().getFieldName(), ts);
-
-    // Write log text
-//    setTextViewLogger(logString);
+    Log.d(TAG, "onFieldDataRequestSuccess: "+logString);
 
     /*
      * NOTE!
@@ -212,7 +190,7 @@ public class LCRFieldListener implements FieldListener {
       ,cause.getLocalizedMessage());
 
     // Write log text
-//    setTextViewLogger(logString);
+    Log.e(TAG, "onFieldDataRequestFailed: "+logString, cause);
   }
 
   /**
@@ -272,8 +250,7 @@ public class LCRFieldListener implements FieldListener {
       "Field data request state change %s %s -> %s time : %s" ,requestField.getItemToRequest().getFieldName(), frs_old, frs_new, ts);
 
     // Write log text
-//    setTextViewLogger(logString);
-
+    Log.d(TAG, "onFieldDataRequestStateChanged: "+logString);
   }
 
   /**
@@ -291,8 +268,7 @@ public class LCRFieldListener implements FieldListener {
     @NonNull RequestField requestField,
     @NonNull Boolean overWriteRequest) {
 
-    // Logging data request add success event
-//    setTextViewLogger("Field data request add success : " + requestField.getItemToRequest().getFieldName());
+    Log.d(TAG, "onFieldDataRequestAddSuccess: " + requestField.getItemToRequest().getFieldName());
   }
 
   /**
@@ -310,11 +286,7 @@ public class LCRFieldListener implements FieldListener {
     @NonNull RequestField requestField,
     @NonNull Throwable cause) {
 
-    // Logging data request add failed
-//    setTextViewLogger("Field data request add failed : "
-//      + requestField.getItemToRequest().getFieldName()
-//      + "\nCause :"
-//      + cause.getLocalizedMessage());
+    Log.e(TAG, "onFieldDataRequestAddFailed: "+ requestField.getItemToRequest().getFieldName(), cause);
   }
 
   /**
@@ -332,7 +304,7 @@ public class LCRFieldListener implements FieldListener {
     @NonNull RequestField requestField,
     @NonNull String info) {
 
-//    setTextViewLogger("Field read data request removed : " + requestField.getItemToRequest().getFieldName() + " - " + info);
+    Log.d(TAG, "onFieldDataRequestRemoved: "+ requestField.getItemToRequest().getFieldName() + " - " + info);
   }
 
   /**
@@ -353,7 +325,7 @@ public class LCRFieldListener implements FieldListener {
     @Nullable FIELD_WRITE_STATE newValue,
     @Nullable FIELD_WRITE_STATE oldValue) {
 
-//    setTextViewLogger("Write field state : " + oldValue + " -> " + newValue);
+    Log.d(TAG, "onFieldWriteStatusChanged: "+ oldValue + " -> " + newValue);
   }
 
   /**
@@ -371,7 +343,7 @@ public class LCRFieldListener implements FieldListener {
     @NonNull FieldItem fieldItem,
     @NonNull String data) {
 
-//    setTextViewLogger("Field data write success : " + fieldItem.getFieldName());
+    Log.d(TAG, "onFieldWriteSuccess: "+ fieldItem.getFieldName());
   }
 
   /**
@@ -395,10 +367,10 @@ public class LCRFieldListener implements FieldListener {
     if(cause != null) {
       errorMsg = cause.getLocalizedMessage();
     }
-//    if(fieldItem != null) {
-//      setTextViewLogger("Field data write failed : " + fieldItem.getFieldName() + " Cause : " + errorMsg);
-//    } else {
-//      setTextViewLogger("Field data write failed : " + "null fieldItem" + " Cause : " + errorMsg);
-//    }
+    if(fieldItem != null) {
+      Log.e(TAG, "onFieldWriteFailed: "+ fieldItem.getFieldName() + " Cause : " + errorMsg, cause);
+    } else {
+      Log.e(TAG, "onFieldWriteFailed: "+ "null fieldItem" + " Cause : " + errorMsg, cause);
+    }
   }
 }

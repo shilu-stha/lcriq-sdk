@@ -1,42 +1,25 @@
 package com.reactlibrary.listeners;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.liquidcontrols.lcr.iq.sdk.DeviceInfo;
 import com.liquidcontrols.lcr.iq.sdk.interfaces.CommandListener;
 import com.liquidcontrols.lcr.iq.sdk.lc.api.constants.LCR.COMMAND_STATE;
 import com.liquidcontrols.lcr.iq.sdk.lc.api.constants.LCR.LCR_COMMAND;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.reactlibrary.LCRManager;
 
 public class LCRCommandListener implements CommandListener {
 
+  private static String TAG = "lcr-sdk: LCRCommandListener";
   private final Context context;
-  private TextView tvLogger;
 
   public LCRCommandListener(Context context){
     this.context = context;
-//    tvLogger = (TextView) ((MainActivity)context).findViewById(R.id.tv_data_logger);
-
-    Log.d("Panda", "LCRCommandListener"+ context);
   }
 
-//  private void setTextViewLogger(String text) {
-//    Logs logs = Logs.getInstance();
-//    List<String> dataList = logs.setTextViewLogger(text);
-//
-//    String textBuffer = "";
-//    // Make data to print
-//    for (String str : dataList) {
-//      textBuffer = textBuffer + str + "\n";
-//    }
-//    // Print data
-//    tvLogger.setText(textBuffer);
-//    Log.d("Panda", textBuffer);
-//  }
 
   /**
    * onCommandStateChanged listener is activated when ever command state is changed
@@ -54,7 +37,7 @@ public class LCRCommandListener implements CommandListener {
     @Nullable COMMAND_STATE newValue,
     @Nullable COMMAND_STATE oldValue) {
 
-//    setTextViewLogger("Command state : " + oldValue + " -> " + newValue);
+    Log.d(TAG,"Command state : " + oldValue + " -> " + newValue);
   }
 
   /**
@@ -69,7 +52,8 @@ public class LCRCommandListener implements CommandListener {
     @NonNull DeviceInfo deviceInfo,
     @NonNull LCR_COMMAND command) {
 
-//    setTextViewLogger("Command success : " + command);
+    Log.d(TAG,"SDK: Command Success: "+command);
+    LCRManager.getInstance(context).resolvePromise(true, "SDK: Command Success: "+command, "commandRequest");
   }
 
   /**
@@ -90,6 +74,8 @@ public class LCRCommandListener implements CommandListener {
     if(cause != null) {
       errorMsg = cause.getLocalizedMessage();
     }
-//    setTextViewLogger("Command failed : " + command + " Cause : " + errorMsg);
+
+    Log.d(TAG,"Command failed : " + command + " Cause : " + errorMsg);
+    LCRManager.getInstance(context).resolvePromise(false, "Command failed : " + command + " Cause : " + errorMsg, "commandRequest");
   }
 }

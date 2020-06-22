@@ -25,7 +25,7 @@ public class LCRDeviceListener implements DeviceListener {
   @Override
   public void onDeviceAddSuccess(@NonNull String deviceId) {
     // Logging success
-    Log.d(TAG,"Panda Add device success : "+  deviceId);
+    Log.d(TAG,"Add device success : "+  deviceId);
 
     // Finally Connect the device.
     LCRManager.getInstance(context).connectDevice();
@@ -43,7 +43,7 @@ public class LCRDeviceListener implements DeviceListener {
       strCause = cause.getMessage();
     }
     // Logging add device error
-    Log.e(TAG, "Panda Add device failed : "+ strCause);
+    Log.e(TAG, "Add device failed : "+ strCause);
     LCRManager.getInstance(context).resolvePromise(false, "SDK: Add device failed : "+ strCause, "connectDevice");
   }
 
@@ -54,7 +54,7 @@ public class LCRDeviceListener implements DeviceListener {
   @Override
   public void onDeviceRemoveSuccess(@NonNull String deviceId) {
     // Logging actions
-    Log.d(TAG, "Panda Remove device success: "+ deviceId);
+    Log.d(TAG, "Remove device success: "+ deviceId);
 
     // Logging actions
 //    setTextViewLogger("Remove device success");
@@ -72,7 +72,7 @@ public class LCRDeviceListener implements DeviceListener {
       strCause = cause.getMessage();
     }
     // Logging remove device error
-    Log.e(TAG, "Panda Remove device failed : "+ strCause);
+    Log.e(TAG, "Remove device failed : "+ strCause);
 
     // Logging remove device error
 //    setTextViewLogger("Remove device failed : " + strCause);
