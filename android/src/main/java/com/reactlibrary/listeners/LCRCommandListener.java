@@ -75,7 +75,7 @@ public class LCRCommandListener implements CommandListener {
       errorMsg = cause.getLocalizedMessage();
     }
 
-    Log.d(TAG,"Command failed : " + command + " Cause : " + errorMsg);
+    Log.e(TAG,"Command failed : " + command + " Cause : " + errorMsg, cause);
     LCRManager.getInstance(context).resolvePromise(false, "Command failed : " + command + " Cause : " + errorMsg, "commandRequest");
   }
 }
