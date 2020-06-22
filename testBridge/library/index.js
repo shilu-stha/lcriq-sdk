@@ -4,7 +4,7 @@
 import bridgeOperations from '../bridgeOperations';
 
 export default {
-  coolFeature: () => coolFeature(bridgeOperations),
+  // coolFeature: () => coolFeature(bridgeOperations),
   ...bridgeOperations,
 };
 
