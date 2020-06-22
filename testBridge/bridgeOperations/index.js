@@ -16,8 +16,8 @@ export default {
   initializeSdk: () => initializeSdk(bridge, eventEmitter),
   terminate: () => terminate(bridge),
   connectDevice: (type, details) => connectDevice(type, details, bridge, eventEmitter),
-  start:() => start(bridge),
-  stop:() => stop(bridge),
-  pause:() => pause(bridge),
+  start:() => start(bridge, eventEmitter),
+  stop:() => stop(bridge, eventEmitter),
+  pause:() => pause(bridge, eventEmitter),
   requestData:() => requestData(bridge)
 };
