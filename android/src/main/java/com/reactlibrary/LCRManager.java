@@ -78,7 +78,6 @@ public class LCRManager {
         } else {
           Log.d(TAG, "SDK: SDK Init success");
           LCRManager.this.addSDKListeners();
-          resolvePromise(true, "SDK: SDK Init success", "initializeSdk");
         }
       }
     });
@@ -89,6 +88,9 @@ public class LCRManager {
    */
   private void addSDKListeners() {
     if(lcrSdk == null) {
+      Log.e(TAG, "SDK: SDK not initialized");
+
+      resolvePromise(false, "SDK:  SDK not initialized", "initializeSdk");
       return;
     }
 
@@ -117,25 +119,7 @@ public class LCRManager {
     lcrSdk.addListener(new LCRNetworkConnectionListener(context));
 
     Log.d(TAG, "SDK: Add Listeners");
-    resolvePromise(true, "SDK: Add Listeners", "initializeSdk");
-  }
-
-  /**
-   * Remove device and terminate connection with the sdk.
-   */
-  public void terminateSdk() {
-    if(lcrSdk != null) {
-      // Remove device
-      try {
-        lcrSdk.removeDevice(ConnectionUtils.getInstance().getDeviceId());
-      } catch (SDKDeviceException e) {
-        e.printStackTrace();
-      }
-      // Remove used listeners
-      lcrSdk.removeAllListeners();
-      // Request SDK perform quit actions
-      lcrSdk.quit();
-    }
+    resolvePromise(true, "SDK: Initialize SDK and Add Listeners", "initializeSdk");
   }
 
   /**
@@ -147,6 +131,7 @@ public class LCRManager {
     // Check SDK object (if call this method after close object)
     if(lcrSdk == null) {
       Log.e(TAG, "SDK: SDK not initialized");
+
       resolvePromise(false, "SDK: SDK not initialized", "connectDevice");
       return;
     }
@@ -165,6 +150,9 @@ public class LCRManager {
    */
   protected void addDevice(String type, ReadableMap additionalDetails){
     if(lcrSdk == null) {
+      Log.e(TAG, "SDK: SDK not initialized");
+
+      resolvePromise(false, "SDK:  SDK not initialized", "connectDevice");
       return;
     }
 
@@ -190,19 +178,10 @@ public class LCRManager {
     } catch (Exception e) {
       // Device add request fail
       String strError = "Device add request failed : " + e.getLocalizedMessage();
-      Log.e("Main",strError);
-    }
-  }
 
-  /** Request SDK to disconnect from device */
-  public void disconnectDevice() {
-    // Check SDK object (if call this method after close object)
-    if(lcrSdk == null) {
-      return;
+      Log.e("Main",strError);
+      resolvePromise(false, strError, "connectDevice");
     }
-    // Call SDK to make disconnect command for device
-    lcrSdk.disconnect(ConnectionUtils.getInstance().getDeviceId());
-    Log.d(TAG, "SDK: Device Disconnected");
   }
 
   public void start() {
@@ -240,5 +219,34 @@ public class LCRManager {
   }
   public void reset() {
 
+  }
+
+  /**
+   * Remove device and terminate connection with the sdk.
+   */
+  public void terminateSdk() {
+    if(lcrSdk != null) {
+      // Remove device
+      try {
+        lcrSdk.removeDevice(ConnectionUtils.getInstance().getDeviceId());
+      } catch (SDKDeviceException e) {
+        e.printStackTrace();
+      }
+      // Remove used listeners
+      lcrSdk.removeAllListeners();
+      // Request SDK perform quit actions
+      lcrSdk.quit();
+    }
+  }
+
+  /** Request SDK to disconnect from device */
+  public void disconnectDevice() {
+    // Check SDK object (if call this method after close object)
+    if(lcrSdk == null) {
+      return;
+    }
+    // Call SDK to make disconnect command for device
+    lcrSdk.disconnect(ConnectionUtils.getInstance().getDeviceId());
+    Log.d(TAG, "SDK: Device Disconnected");
   }
 }

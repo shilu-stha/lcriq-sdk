@@ -3,7 +3,6 @@ package com.reactlibrary;
 
 import android.support.annotation.Nullable;
 
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -39,16 +38,6 @@ public class RNLibLcrModule extends ReactContextBaseJavaModule {
     return REACT_CLASS;
   }
 
-  @Override
-  public Map<String, Object> getConstants() {
-    // Export any constants to be used in your native module
-    // https://facebook.github.io/react-native/docs/native-modules-android.html#the-toast-module
-    final Map<String, Object> constants = new HashMap<>();
-    constants.put("EXAMPLE_CONSTANT", "example");
-
-    return constants;
-  }
-
   /**
    * A method for emitting from the native side to JS
    * @param eventName
@@ -73,6 +62,7 @@ public class RNLibLcrModule extends ReactContextBaseJavaModule {
 
   /**
    * Connect to LCR meter. Send type of connection and its details.
+   * NOTE: Make sure to request for permission and check bluetooth connect from the app before calling this method
    *
    * @param type (WIFI, BLUETOOTH)
    * @param additionalDetails (Wifi: ipAddress, port; Bluetooth: name)
