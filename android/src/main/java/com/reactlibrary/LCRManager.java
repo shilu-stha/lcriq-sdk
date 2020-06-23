@@ -26,7 +26,6 @@ import com.reactlibrary.listeners.LCRNetworkConnectionListener;
 import com.reactlibrary.listeners.LCRPrinterStatusListener;
 import com.reactlibrary.listeners.LCRSwitchStateListener;
 
-import java.sql.Struct;
 import java.util.concurrent.TimeUnit;
 
 import static com.reactlibrary.RNLibLcrModule.emitDeviceEvent;
@@ -279,7 +278,7 @@ public class LCRManager {
               Log.e(TAG, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), throwable );
               resolvePromise(false, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), "requestFieldData");
             } else {
-              Log.e(TAG, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " + throwable.getLocalizedMessage(), throwable );
+              Log.d(TAG, "SDK : Request command for field " + flowRate.getFieldName() + " failed : " );
               resolvePromise(true, "SDK : Request command for field " + flowRate.getFieldName() + " success ", "requestFieldData");
             }
           }
