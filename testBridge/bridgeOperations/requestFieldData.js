@@ -20,10 +20,6 @@ export const removeFieldData = (fields, bridge, eventEmitter) => {
     });
 }
 
-export const grossQty = (eventEmitter) => eventEmitter.addListener('GROSS_QTY', (response) => {
-  resolve(response);
-});
+export const registerGallonEvent = (callback, eventEmitter) => eventEmitter.addListener('GROSS_QTY', callback);
 
-export const flowRate = (eventEmitter) => eventEmitter.addListener('FLOW_RATE', (response) => {
-  resolve(response);
-});
+export const registerFlowRateEvent = (callback, eventEmitter) => eventEmitter.addListener('FLOW_RATE', callback);

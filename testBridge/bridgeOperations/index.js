@@ -1,10 +1,9 @@
 // defines bridge operations
-
-import { NativeModules, NativeEventEmitter } from 'react-native';
-import {requestFieldData, removeFieldData, grossQty, flowRate} from './requestFieldData';
-import initializeSdk, { terminate } from './initializeSdk';
 import connectDevice from './connectDevice';
 import { start, stop, pause } from './fieldCommands';
+import initializeSdk, { terminate } from './initializeSdk';
+import { NativeModules, NativeEventEmitter } from 'react-native';
+import {requestFieldData, removeFieldData, registerGallonEvent, registerFlowRateEvent} from './requestFieldData';
 
 const bridge = NativeModules.RNLibLcrModule;
 const eventEmitter = new NativeEventEmitter(bridge);
@@ -25,6 +24,6 @@ export default {
   // Request for field values from the meter
   requestFieldData: (fields) => requestFieldData(fields, bridge, eventEmitter),
   removeFieldData: (fields) => removeFieldData(fields, bridge, eventEmitter),
-  getGallons: () => grossQty(eventEmitter),
-  getFlowRate: () => flowRate(eventEmitter)
+  registerGallonEvent: (callback) => registerGallonEvent(callback, eventEmitter),
+  registerFlowRateEvent: (callback) => registerFlowRateEvent(callback, eventEmitter),
 };
